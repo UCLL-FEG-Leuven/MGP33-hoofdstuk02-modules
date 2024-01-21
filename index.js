@@ -12,9 +12,10 @@ const ctx = canvas.getContext("2d");
 ctx.fillStyle = "black";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// Elke 100 msec de nieuwe situatie berekenen, afhankelijk van de snelheid ...
+// Elke 33 msec de nieuwe situatie berekenen, afhankelijk van de snelheid ...
+// (33 msec = +/- 30 fps)
 setInterval(() => {
     honda.renderCanvas(ctx);
     audi.renderCanvas(ctx);
     vw.renderCanvas(ctx);
-}, 100);
+}, 33);
