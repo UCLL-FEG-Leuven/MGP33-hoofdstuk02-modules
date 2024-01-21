@@ -1,4 +1,6 @@
-class AutomaticCar extends Car { // overerven gebeurt via het ‘extends’ keyword
+import { Car } from "./car.js";
+
+export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends’ keyword
     #gearMode; // ter info: mogelijke waarden zijn Park, Reverse, Neutral, Drive, ...
     constructor(brand, color, fuelType) {
       super(brand, color, fuelType); // verplicht: super roept de constructor van parent class Car aan.

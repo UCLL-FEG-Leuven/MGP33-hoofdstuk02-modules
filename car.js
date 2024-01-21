@@ -1,4 +1,4 @@
-class Car { // de naam begint met een hoofdletter (= conventie)
+export class Car { // de naam begint met een hoofdletter (= conventie)
     static #lastId = 0;
 
     #id;  // De hashtag (#) geeft aan dat dit ‘private’ attributen zijn
@@ -14,7 +14,8 @@ class Car { // de naam begint met een hoofdletter (= conventie)
       this.#brand = brand; 
       this.#color = color; 
       this.#fuelType = fuelType; 
-      this.#gear = 0; 
+
+      this.#gear = 0;       
       this.#speed = 0;
     }
 
@@ -46,5 +47,5 @@ class Car { // de naam begint met een hoofdletter (= conventie)
     gearDown() {
         this.#gear--;
         console.log(`Gear down. Gear position of ${this.#brand} with ID ${this.id} is ${this.gear}.`);
-    }    
+    }
   }

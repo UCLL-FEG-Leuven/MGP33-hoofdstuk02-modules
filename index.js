@@ -1,4 +1,7 @@
-let honda = new Car("Honda","Groen","Diesel"); // ‘new’ keyword maakt object aan van class
+import { Car } from "./car.js";
+import { AutomaticCar } from "./automatic-car.js";
+
+let honda = new Car("Honda","Groen","Diesel");
 honda.start();
 honda.gearUp();
 honda.move(10);
