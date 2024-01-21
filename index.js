@@ -1,25 +1,20 @@
+import { Point2D } from "./physics-engine/point-2d.js";
 import { Car } from "./car.js";
 import { AutomaticCar } from "./automatic-car.js";
 
-let honda = new Car("Honda","Groen","Diesel");
-honda.start();
-honda.gearUp();
-honda.move(10);
-// ...
-honda.gearUp();
-honda.move(20);
-// ...
+let honda = new Car("Honda","Groen","Diesel", new Point2D(100, 100));
+let audi = new Car("Audi","Grijs","Benzine", new Point2D(100, 300));
+let vw = new AutomaticCar("Volkswagen","Wit","Benzine", new Point2D(100, 500));
 
-let audi = new Car("Audi","Grijs","Benzine");
-audi.start();
-// ...
+// Een zwart canvas tekenen
+const canvas = document.getElementById("race-circuit");
+const ctx = canvas.getContext("2d");
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-let vw = new AutomaticCar("Volkswagen","Wit","Benzine");
-vw.start();
-vw.gearMode = "Drive";
-vw.move(10);
-// ...
-vw.move(50);
-// ...
-vw.move(100); // “pedal to the metal”
-// ...
+// Elke 100 msec de nieuwe situatie berekenen, afhankelijk van de snelheid ...
+setInterval(() => {
+    honda.renderCanvas(ctx);
+    audi.renderCanvas(ctx);
+    vw.renderCanvas(ctx);
+}, 100);
