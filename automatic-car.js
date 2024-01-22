@@ -1,4 +1,4 @@
-import { Car } from "./car.js";
+import { Car, MAX_SPEED_IN_METERS_PER_SECONDE } from "./car.js";
 
 export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends’ keyword
     #gearMode; // ter info: mogelijke waarden zijn Park, Reverse, Neutral, Drive, ...
@@ -11,11 +11,11 @@ export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends�
     } 
     set gearMode(newGearMode) { // Een ‘property setter’ voor schrijftoegang.
         this.#gearMode = newGearMode; 
-        console.log(`Gear mode of automatic ${this.brand} with ID ${this.id} has been set to ${this.#gearMode}.`);
     } 
-    move(pedalPosition) {     
-        // Berekenen van de gear ...
-        console.log(`Calculating recommended gear position of automatic ${this.brand} with ID ${this.id}...`);
-        super.move(pedalPosition);
+    computeNewSpeed() { 
+        if (this.speed.x >= (this.gear / 5.0) * MAX_SPEED_IN_METERS_PER_SECONDE) {
+            this.gearUp();
+        }
+        super.computeNewSpeed();
     } 
   } 

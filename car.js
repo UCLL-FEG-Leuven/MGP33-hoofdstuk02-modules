@@ -1,5 +1,7 @@
-import { Point2D } from "./physics-engine/point-2d.js";
 import { Vector2D } from "./physics-engine/vector-2d.js";
+import { calculateNewPosition } from "./physics-engine/engine.js";
+
+export const MAX_SPEED_IN_METERS_PER_SECONDE = 55.56; // 55.56 m/s = +/- 200 km/u
 
 export class Car { // de naam begint met een hoofdletter (= conventie)
     static #lastId = 0;
@@ -9,6 +11,11 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
     #color;
     #fuelType;
     #gear;
+
+    #started = false;
+    #speedPedalPosition = 0;
+    #brakePedalPosition = 0;
+
     #position;
     #speed;
 
@@ -19,39 +26,53 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
       this.#color = color; 
       this.#fuelType = fuelType; 
 
-      this.#position = position;
       this.#gear = 0;       
-      this.#speed = 0;
+
+      this.#position = position;      
+      this.#speed = new Vector2D(0,0);
     }
 
     get id() { return this.#id; }
     get brand() { return this.#brand; }
     get gear() { return this.#gear; } 
 
-    start() { // method van een Car object. De naam begint met een kleine letter (= conventie)
-        console.log(`${this.#brand} with ID ${this.id} started.`);
+    get speed() { return this.#speed; }
+
+    start() {         
+        this.#started = true;
     }  
 
-    stop() {
-        console.log(`${this.#brand} with ID ${this.id} stopped.`);
+    stop() {        
+        this.#started = false;
     } 
 
-    move(pedalPosition) { // ter info: pedalPosition is een percentage (dus number tussen 0 en 100).
-        console.log(`Speed pedal position of ${this.#brand} with ID ${this.id} is ${pedalPosition}%.`);
+    move(pedalPosition) {
+        this.#speedPedalPosition = pedalPosition;
     } 
 
     brake(pedalPosition) {
-        console.log(`Brake pedal position of ${this.#brand} with ID ${this.id} is ${pedalPosition}%.`);
+        this.#brakePedalPosition = this.#brakePedalPosition;
     }
 
     gearUp() {        
         this.#gear++;
-        console.log(`Gear up. Gear position of ${this.#brand} with ID ${this.id} is now ${this.gear}.`);
+        if (this.#gear > 5) this.#gear = 5;
     }
 
     gearDown() {
         this.#gear--;
-        console.log(`Gear down. Gear position of ${this.#brand} with ID ${this.id} is ${this.gear}.`);
+        if (this.#gear < 0) this.#gear = 0;
+    }
+
+    computeNewSpeed() {
+        if (this.#started) {
+            this.#speed = new Vector2D(
+                MAX_SPEED_IN_METERS_PER_SECONDE * (this.#gear / 5.0) * (this.#speedPedalPosition / 100.0) / (this.#brakePedalPosition === 0 ? 1 : this.#brakePedalPosition), 
+                0);    
+        } else {
+            this.#speed = new Vector2D(0,0);
+        }
+        this.#position = calculateNewPosition(this.#position, this.#speed, 33);
     }
 
     renderCanvas(ctx) {

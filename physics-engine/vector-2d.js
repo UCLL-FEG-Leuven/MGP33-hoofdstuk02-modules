@@ -1,18 +1,25 @@
-import { Point2D } from "./point-2d.js";
+export class Vector2D {
+    #x;
+    #y;
 
-export class Vector2D extends Point2D {
-    #length = 0;
-
-    constructor(x, y, length) {
-        super(x,y);
-        this.#length = length;
+    constructor(x, y) {
+        this.#x = x;
+        this.#y = y;
     }
 
-    get length() {
-        return this.#length;
+    get x() {
+        return this.#x;
     }
 
-    set length(length) {
-        this.#length = length;
+    set x(newX) {
+        this.#x = newX;
+    }
+
+    get y() {
+        return this.#y;
+    }
+
+    set y(newY) {
+        this.#y = newY;
     }
 }
