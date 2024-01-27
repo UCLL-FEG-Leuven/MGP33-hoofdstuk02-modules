@@ -22,4 +22,8 @@ export class Vector2D {
     set y(newY) {
         this.#y = newY;
     }
+
+    toString() {
+        return `Vector2D(${this.x}, ${this.y})`;
+    }
 }

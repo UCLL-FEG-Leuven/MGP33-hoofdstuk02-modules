@@ -3,41 +3,37 @@ import { Vector2D } from "./physics-engine/vector-2d.js";
 import { Car } from "./car.js";
 import { AutomaticCar } from "./automatic-car.js";
 
-let honda = new Car("Honda","Groen","Diesel", new Vector2D(100, 100));
+let honda = new Car("Honda","Groen", 145, new Vector2D(100, 100));
 honda.start();
 honda.gearUp();
-honda.move(10);
-honda.gearUp();
-honda.move(20);
+honda.acceleratorPedalPosition= 0.5;
 
-let audi = new Car("Audi","Grijs","Benzine", new Vector2D(100, 300));
-audi.start();
+let audi = new Car("Audi","Grijs", 220, new Vector2D(100, 300));
 
-let vw = new AutomaticCar("Volkswagen","Wit","Benzine", new Vector2D(100, 500));
+let vw = new AutomaticCar("Volkswagen","Wit", 180, new Vector2D(100, 500));
 vw.start();
-vw.gearMode = "Drive";
-vw.move(10);
-vw.move(50);
-vw.move(100); // “pedal to the metal”
+vw.gearMode = "D";
+vw.acceleratorPedalPosition = 1;
 
-// Een zwart canvas tekenen
+// Een 2D context aanmaken om op de canvas te kunnen tekenen.
 const canvas = document.getElementById("race-circuit");
 const ctx = canvas.getContext("2d");
 
-// Elke 33 msec de nieuwe situatie berekenen, afhankelijk van de snelheid ...
-// (33 msec = +/- 30 fps)
-setInterval(() => {
-    // Game logic
-    honda.computeNewSpeed();
-    audi.computeNewSpeed();
-    vw.computeNewSpeed();
+let cars = [honda, audi, vw];
 
-    // Rendering
+setInterval(() => {
+    // Canvas terug leegmaken
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    honda.renderCanvas(ctx);
-    audi.renderCanvas(ctx);
-    vw.renderCanvas(ctx);
+    // Auto's tekenen
+    cars.forEach((car) => {
+
+        // game logic
+        car.move(0.033); // 0.033 seconden = 33 msec (+/- 30 keer per seconde)
+
+        // rendering. 
+        car.renderCanvas(ctx);
+    });
 }, 33);
 

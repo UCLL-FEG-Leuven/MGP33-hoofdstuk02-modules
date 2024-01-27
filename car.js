@@ -1,7 +1,7 @@
 import { Vector2D } from "./physics-engine/vector-2d.js";
-import { calculateNewPosition } from "./physics-engine/engine.js";
+import { calculateNewSpeed, calculateNewPosition } from "./physics-engine/engine.js";
 
-export const MAX_SPEED_IN_METERS_PER_SECONDE = 55.56; // 55.56 m/s = +/- 200 km/u
+export const MAX_ACCELERATION_IN_METERS_SEC = 27.8;
 
 export class Car { // de naam begint met een hoofdletter (= conventie)
     static #lastId = 0;
@@ -9,34 +9,55 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
     #id;  // De hashtag (#) geeft aan dat dit ‘private’ attributen zijn
     #brand;
     #color;
-    #fuelType;
+    #maxSpeed;
+
     #gear;
-
     #started = false;
-    #speedPedalPosition = 0;
-    #brakePedalPosition = 0;
+    #acceleratorPedalPosition;
+    #brakePedalPosition;
 
+    #acceleration;
     #position;
     #speed;
 
-    constructor(brand, color, fuelType, position) { // slechts één constructor mogelijk. Bemerk het gebruik van this.
+    constructor(brand, color, maxSpeed, position) {
       this.#id = Car.#lastId++;
+      this.#brand = brand;
+      this.#color = color;
+      this.#maxSpeed = maxSpeed;
 
-      this.#brand = brand; 
-      this.#color = color; 
-      this.#fuelType = fuelType; 
+      this.#started = false;
+      this.#gear = 0;
+      this.#acceleratorPedalPosition = 0;
+      this.#brakePedalPosition = 0;
 
-      this.#gear = 0;       
-
-      this.#position = position;      
-      this.#speed = new Vector2D(0,0);
+      this.#acceleration = new Vector2D(0,0); // nog geen versnelling
+      this.#speed = new Vector2D(0,0); // nog geen snelheid
+      this.#position = position;
     }
 
     get id() { return this.#id; }
     get brand() { return this.#brand; }
-    get gear() { return this.#gear; } 
+    get maxSpeed() { return this.#maxSpeed; }
 
+    get started() { return this.#started; }
+    get gear() { return this.#gear; }
+    get acceleratorPedalPosition() { return this.#acceleratorPedalPosition; }
+    set acceleratorPedalPosition(newValue) {
+        if (newValue < 0 || newValue > 1)
+            throw "Gelieve een waarde (kommagetal) in het interval [0,1] te kiezen.";
+        this.#acceleratorPedalPosition = newValue;
+    }
+    get brakePedalPosition() { return this.#brakePedalPosition; }
+    set brakePedalPosition(newValue) {
+        if (newValue < 0 || newValue > 1)
+            throw "Gelieve een waarde (kommagetal) in het interval [0,1] te kiezen.";
+        this.#brakePedalPosition = newValue;
+    }
+
+    get acceleration() { return this.#acceleration; }
     get speed() { return this.#speed; }
+    get position() { return this.#position; }
 
     start() {         
         this.#started = true;
@@ -44,14 +65,6 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
 
     stop() {        
         this.#started = false;
-    } 
-
-    move(pedalPosition) {
-        this.#speedPedalPosition = pedalPosition;
-    } 
-
-    brake(pedalPosition) {
-        this.#brakePedalPosition = this.#brakePedalPosition;
     }
 
     gearUp() {        
@@ -64,15 +77,32 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
         if (this.#gear < 0) this.#gear = 0;
     }
 
-    computeNewSpeed() {
+    move(timeSpanInSec) {
+        //console.log(this.#speed);
         if (this.#started) {
-            this.#speed = new Vector2D(
-                MAX_SPEED_IN_METERS_PER_SECONDE * (this.#gear / 5.0) * (this.#speedPedalPosition / 100.0) / (this.#brakePedalPosition === 0 ? 1 : this.#brakePedalPosition), 
-                0);    
+            // console.log(this.#position.x);
+            // De huidige versnelling (acceleration) is afhankelijk van pedaalposities. 
+            // Als het rempedaal harder wordt ingedrukt dan is de versnelling negatief (= vertraging).
+            // Bemerk dat de versnelling enkel in de X dimensie van toepassing is bij ons.
+            this.#acceleration = new Vector2D(
+                MAX_ACCELERATION_IN_METERS_SEC * (this.#acceleratorPedalPosition - this.#brakePedalPosition),
+                0);
+
+            // Berekenen van nieuwe snelheid op basis van de versnelling of vertraging
+            // Er wordt van uitgegaan dat elke gear in 20% extra snelheid zal resulteren.
+            // Zo zal bij het bereiken van gear 5 100% van de maxspeed kunnen bereikt worden.
+            // Opgelet: maxSpeed is in km/u -> we moeten het dus eerst omzetten naar m/s.
+            const maxSpeedInMetersPerSecond = (this.#maxSpeed * 1000) / 3600;
+            this.#speed = calculateNewSpeed(this.#speed, this.#acceleration, timeSpanInSec);
+            this.#speed.x = Math.min(maxSpeedInMetersPerSecond * (this.#gear / 5.0), this.#speed.x); // aftoppen op max speed afh. van gear ...
+
+            // De nieuwe positie: vorige positie + afstand die afgelegd werd over de timespan.
+            this.#position = calculateNewPosition(this.#position, this.#speed, timeSpanInSec);
         } else {
+            // Als de auto gestopt wordt tijdens het rijden: dan komt die onmiddellijk tot stilstand.
+            this.#acceleration = new Vector2D(0,0)
             this.#speed = new Vector2D(0,0);
         }
-        this.#position = calculateNewPosition(this.#position, this.#speed, 33);
     }
 
     renderCanvas(ctx) {

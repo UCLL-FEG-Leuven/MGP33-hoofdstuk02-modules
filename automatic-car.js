@@ -1,4 +1,4 @@
-import { Car, MAX_SPEED_IN_METERS_PER_SECONDE } from "./car.js";
+import { Car } from "./car.js";
 
 export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends’ keyword
     #gearMode; // ter info: mogelijke waarden zijn Park, Reverse, Neutral, Drive, ...
@@ -12,10 +12,12 @@ export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends�
     set gearMode(newGearMode) { // Een ‘property setter’ voor schrijftoegang.
         this.#gearMode = newGearMode; 
     } 
-    computeNewSpeed() { 
-        if (this.speed.x >= (this.gear / 5.0) * MAX_SPEED_IN_METERS_PER_SECONDE) {
+    move(timeSpanInSec) { 
+        // Iets intelligentere schakelbak ... -> als de huidige horizontale snelheid in de buurt komt van de 80% van de maximale snelheid van de huidige gear -> schakelen!
+        // Opgelet: maxSpeed is in km/u -> omzetten naar m/s is nodig.
+        if (this.speed.x >= (this.gear / 5.0) * ((this.maxSpeed * 1000) / 3600) * 0.8) {
             this.gearUp();
         }
-        super.computeNewSpeed();
+        super.move(timeSpanInSec);
     } 
   } 

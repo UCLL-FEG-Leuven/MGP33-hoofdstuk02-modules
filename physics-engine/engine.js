@@ -1,12 +1,15 @@
 import { Vector2D } from "./vector-2d.js";
 
-export function calculateNewPosition(currentPosition, speedVector, timeSpanInMsec) {
-    let speedDelta = new Vector2D(
-        speedVector.x * (timeSpanInMsec / 1000), 
-        speedVector.y * (timeSpanInMsec / 1000));
-    let newPosition = new Vector2D(
-        currentPosition.x + speedDelta.x,
-        currentPosition.y + speedDelta.y
+export function calculateNewSpeed(currentSpeedVector, accelerationVector, timeSpanInSec) {
+    return new Vector2D(
+        currentSpeedVector.x + accelerationVector.x * timeSpanInSec,
+        currentSpeedVector.y + accelerationVector.y * timeSpanInSec
     );
-    return newPosition;
+} 
+
+export function calculateNewPosition(currentPosition, speedVector, timeSpanInSec) {
+    return new Vector2D(
+        currentPosition.x + speedVector.x * timeSpanInSec,
+        currentPosition.y + speedVector.y * timeSpanInSec
+    );
 }
