@@ -33,7 +33,7 @@ setInterval(() => {
         car.move(0.033); // 0.033 seconden = 33 msec (+/- 30 keer per seconde)
 
         // rendering. 
-        car.renderCanvas(ctx);
+        car.renderOnPage(ctx);
     });
 }, 33);
 

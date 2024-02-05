@@ -105,7 +105,7 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
         }
     }
 
-    renderCanvas(ctx) {
+    renderOnPage(ctx) {
         ctx.beginPath();
         ctx.moveTo(this.#position.x, this.#position.y);
         ctx.lineTo(this.#position.x + 20, this.#position.y);
