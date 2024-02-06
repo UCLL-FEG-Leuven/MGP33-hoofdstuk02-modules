@@ -70,7 +70,7 @@ export class Car { // de naam begint met een hoofdletter (= conventie)
         if (this.#gear < 0) this.#gear = 0;
     }
 
-    move(timeSpanInSec) {
+    move() {
         if (this.#started) {
             console.log(`Moving ${this.#brand} with ID ${this.id}: gear=${this.gear}, accelerator (%)=${this.#acceleratorPedalPosition * 100}, brake (%)=${this.#brakePedalPosition * 100}.`);
         } else {

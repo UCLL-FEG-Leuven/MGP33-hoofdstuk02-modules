@@ -12,12 +12,12 @@ export class AutomaticCar extends Car { // overerven gebeurt via het ‘extends�
     set gearMode(newGearMode) { // Een ‘property setter’ voor schrijftoegang.
         this.#gearMode = newGearMode; 
     } 
-    move(timeSpanInSec) { 
+    move() { 
         // Iets intelligentere schakelbak ... -> als de huidige horizontale snelheid in de buurt komt van de 80% van de maximale snelheid van de huidige gear -> schakelen!
         // Opgelet: maxSpeed is in km/u -> omzetten naar m/s is nodig.
         if (this.speed.x >= (this.gear / 5.0) * ((this.maxSpeed * 1000) / 3600) * 0.8) {
             this.gearUp();
         }
-        super.move(timeSpanInSec);
+        super.move();
     } 
   } 
